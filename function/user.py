@@ -1,18 +1,15 @@
-import pymysql.cursors
-from fastapi import FastAPI, Response
+import uuid
+import pymysql
+from fastapi import Response
 
-app = FastAPI()
-connection = pymysql.connect(
-    host='localhost',
-    user='root',
-    password='pLkt0987...@',
-    db='minibilling'
-)
 
 class User:
+    def __init__(self, connection):
+        self.connection = connection
+
     def get(self, user_id):
         if user_id != '*':
-            with connection.cursor() as cursor:
+            with self.connection.cursor() as cursor:
                 # Read a single record
                 sql = "SELECT * FROM `user` WHERE `user_id`=%s"
                 cursor.execute(sql, (user_id))
@@ -21,8 +18,8 @@ class User:
                     res = {
                         'user_id': result[0],
                         'user_name': result[1],
-                        'phone': result[2],
-                        'email': result[3],
+                        'email': result[2],
+                        'phone': result[3],
                         'address': result[4],
                         'position_id': result[5]
                     }
@@ -31,7 +28,7 @@ class User:
                     return Response(content="User not found", status_code=404)
 
         else:
-            with connection.cursor() as cursor:
+            with self.connection.cursor() as cursor:
                 # Read all records
                 sql = "SELECT * FROM `user`"
                 cursor.execute(sql)
@@ -41,58 +38,38 @@ class User:
                     temp = {
                         'user_id': row[0],
                         'user_name': row[1],
-                        'phone': row[2],
-                        'email': row[3],
+                        'email': row[2],
+                        'phone': row[3],
                         'address': row[4],
                         'position_id': row[5]
                     }
                     res.append(temp)
                 return res
 
+    import uuid
+
     def post(self, user):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             # Create a new record
-            sql = "INSERT INTO `user` (`user_name`, `phone`, `email`, `address`, `position_id`) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(sql, (user['user_name'], user['phone'], user['email'], user['address'], user['position_id']))
-            connection.commit()
-            user_id = cursor.lastrowid
-            return {'user_id': user_id}
+            user_id = uuid.uuid4()
+            sql = "INSERT INTO `user` (`user_id`, `user_name`, `email`, `phone`, `address`, `position_id`) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (
+            user_id, user['user_name'], user['email'], user['phone'], user['address'], user['position_id']))
+            self.connection.commit()
+            return {'user_id': str(user_id)}
 
     def put(self, user_id, user):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             # Update an existing record
             sql = "UPDATE `user` SET `user_name`=%s, `phone`=%s, `email`=%s, `address`=%s, `position_id`=%s WHERE `user_id`=%s"
-            cursor.execute(sql, (user['user_name'], user['phone'], user['email'], user['address'], user['position_id'], user_id))
-            connection.commit()
+            cursor.execute(sql, (user['user_name'], user['email'], user['phone'], user['address'], user['position_id'], user_id))
+            self.connection.commit()
             return Response(status_code=204)
 
     def delete(self, user_id):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             # Delete a record
             sql = "DELETE FROM `user` WHERE `user_id`=%s"
             cursor.execute(sql, (user_id))
-            connection.commit()
+            self.connection.commit()
             return Response(status_code=204)
-
-user = User()
-
-@app.get('/users/{user_id}')
-def get_user(user_id: str):
-    return user.get(user_id)
-
-@app.get('/users')
-def get_all_users():
-    return user.get('*')
-
-@app.post('/users')
-def create_user(user: dict):
-    return user.post(user)
-
-@app.put('/users/{user_id}')
-def update_user(user_id: str, user: dict):
-    return user.put(user_id, user)
-
-@app.delete('/users/{user_id}')
-def delete_user(user_id: str):
-    return user.delete(user_id)
-
