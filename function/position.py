@@ -1,18 +1,13 @@
 import pymysql.cursors
 from fastapi import FastAPI, Response
-
-app = FastAPI()
-connection = pymysql.connect(
-    host='localhost',
-    user='root',
-    password='pLkt0987...@',
-    db='minibilling'
-)
+import uuid
 
 class Position:
+    def __init__(self, connection):
+        self.connection = connection
     def get(self, position_id):
         if position_id != '*':
-            with connection.cursor() as cursor:
+            with self.connection.cursor() as cursor:
                 # Read a single record
                 sql = "SELECT * FROM `position` WHERE `position_id`=%s"
                 cursor.execute(sql, (position_id))
@@ -24,10 +19,10 @@ class Position:
                     }
                     return res
                 else:
-                    return Response(content="User not found", status_code=404)
+                    return Response(content="Error", status_code=404)
 
         else:
-            with connection.cursor() as cursor:
+            with self.connection.cursor() as cursor:
                 # Read all records
                 sql = "SELECT * FROM `position`"
                 cursor.execute(sql)
@@ -43,49 +38,30 @@ class Position:
                 return res
 
     def post(self, position):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             # Create a new record
+            position_id = uuid.uuid4()
             sql = "INSERT INTO `position` (`role`) VALUES (%s)"
-            cursor.execute(sql, (position['role']))
-            connection.commit()
-            position_id = cursor.lastrowid
-            return {'user_id': position_id}
+            cursor.execute(sql, (
+                position_id, position['role']))
+            self.connection.commit()
+            return {'position_id': str(position_id)}
 
     def put(self, position_id, position):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             # Update an existing record
             sql = "UPDATE `position` SET `role`=%s WHERE `position_id`=%s"
             cursor.execute(sql, (position['role'], position_id))
-            connection.commit()
+            self.connection.commit()
             return Response(status_code=204)
 
     def delete(self, position_id):
-        with connection.cursor() as cursor:
+        with self.connection.cursor() as cursor:
             # Delete a record
             sql = "DELETE FROM `position` WHERE `position_id`=%s"
             cursor.execute(sql, (position_id))
-            connection.commit()
+            self.connection.commit()
             return Response(status_code=204)
 
-position = Position()
 
-@app.get('/positions/{position_id}')
-def get_position(position_id: str):
-    return position.get(position_id)
-
-@app.get('/positions')
-def get_all_positions():
-    return position.get('*')
-
-@app.post('/positions')
-def create_position(position: dict):
-    return position.post(position)
-
-@app.put('/positions/{position_id}')
-def update_position(position_id: str, position: dict):
-    return position.put(position_id, position)
-
-@app.delete('/positions/{position_id}')
-def delete_user(position_id: str):
-    return position.delete(position_id)
 

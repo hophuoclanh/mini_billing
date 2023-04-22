@@ -21,7 +21,7 @@ class User:
                         'email': result[2],
                         'phone': result[3],
                         'address': result[4],
-                        'position_id': result[5]
+                        'role': result[5]
                     }
                     return res
                 else:
@@ -52,9 +52,9 @@ class User:
         with self.connection.cursor() as cursor:
             # Create a new record
             user_id = uuid.uuid4()
-            sql = "INSERT INTO `user` (`user_id`, `user_name`, `email`, `phone`, `address`, `position_id`) VALUES (%s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO `user` (`user_id`, `user_name`, `email`, `phone`, `address`, `role`) VALUES (%s, %s, %s, %s, %s, %s)"
             cursor.execute(sql, (
-            user_id, user['user_name'], user['email'], user['phone'], user['address'], user['position_id']))
+            user_id, user['user_name'], user['email'], user['phone'], user['address'], user['role']))
             self.connection.commit()
             return {'user_id': str(user_id)}
 
