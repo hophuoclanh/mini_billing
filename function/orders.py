@@ -42,15 +42,16 @@ class Orders:
     def post(self, orders):
         with self.connection.cursor() as cursor:
             # Create a new record
-            now = datetime.now()
-            year = str(now.year)[-2:]
-            month = str(now.month).zfill(2)
-            day = str(now.day).zfill(2)
-            hour = str(now.hour).zfill(2)
-            minute = str(now.minute).zfill(2)
-            second = str(now.second).zfill(2)
+            daynow = datetime.now()
+            year = str(daynow.year)[-2:]
+            month = str(daynow.month).zfill(2)
+            day = str(daynow.day).zfill(2)
+            hour = str(daynow.hour).zfill(2)
+            minute = str(daynow.minute).zfill(2)
+            second = str(daynow.second).zfill(2)
             order_id = year + month + day + hour + minute + second
-            date= datetime.daytime.now()
+            X= datetime.daytime.now()
+            date= X.isofomat(" ","seconds")
             sql = "INSERT INTO `orders` (`order_id`, `user_id`, `date`, `total_amount`) VALUES (%s, %s, %s, %s)"
             cursor.execute(sql, (
             order_id,date,orders['user_id'],orders['total_amount']))
