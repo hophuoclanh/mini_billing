@@ -41,9 +41,9 @@ class Position:
         with self.connection.cursor() as cursor:
             # Create a new record
             position_id = uuid.uuid4()
-            sql = "INSERT INTO `position` (`role`) VALUES (%s)"
+            sql = "INSERT INTO `position` (`position_id`,`role`) VALUES (%s,%s)"
             cursor.execute(sql, (
-                position_id, position['role']))
+                str(position_id), position['role']))
             self.connection.commit()
             return {'position_id': str(position_id)}
 
