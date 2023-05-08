@@ -4,12 +4,14 @@ from function.user import User
 from function.position import Position
 from function.orders import Orders
 from function.create_order import Create_Order
+from function.authentication_function import Authentication_Function
+
 app = FastAPI()
 connection = pymysql.connect(
     host='localhost',
     user='root',
-    password='Cao.Dien@123',
-    db='mini billing'
+    password='Hong.Lac@2003',
+    db='mini_billing'
 )
 
 user = User(connection)
@@ -98,3 +100,24 @@ def update_create_order(order_id: str, create_order_json: dict):
 @app.delete('/create_order/{order_id}')
 def delete_create_order(order_id: str):
     return create_order.delete(order_id)
+
+authentication_function= Authentication_Function(connection)
+@app.get('/authentication_function/{authentication_function_id}')
+def get_authentication_function(authentication_function_id:str):
+    return authentication_function.get(authentication_function_id)
+
+@app.get('/authentication_function')
+def get_all_authentication_function():
+    return authentication_function.get('*')
+
+@app.post('/authentication_function')
+def create_authentication_function(authentication_function_json: dict):
+    return authentication_function.post(authentication_function_json)
+
+@app.put('/authentication_function/{authentication_function_id}')
+def update_authentication_function(authentication_function_id: str, authentication_function_json: dict):
+    return authentication_function.put(authentication_function_id,authentication_function_json)
+
+@app.delete('/authentication_function/{authentication_function_id}')
+def delete_authentication_function(authentication_function_id: str):
+    return authentication_function.delete(authentication_function_id)
