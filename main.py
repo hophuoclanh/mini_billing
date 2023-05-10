@@ -1,17 +1,15 @@
 import pymysql.cursors
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, HTTPException
 from function.user import User
 from function.position import Position
 from function.orders import Orders
-from function.create_order import Create_Order
 from function.authentication_function import Authentication_Function
-
 app = FastAPI()
 connection = pymysql.connect(
     host='localhost',
     user='root',
-    password='Hong.Lac@2003',
-    db='mini_billing'
+    password='Cao.Dien@123',
+    db='mini billing'
 )
 
 user = User(connection)
@@ -58,48 +56,46 @@ def update_position(position_id: str, position_json: dict):
 def delete_user(position_id: str):
     return position.delete(position_id)
 
-orders= Orders(connection)
-@app.get('/orders/{order_id}')
-def get_order(order_id:str):
-    return orders.get(order_id)
+orders = Orders(connection)
 
-@app.get('/orders')
-def get_all_orders():
-    return orders.get('*')
+@app.get('/orders/{order_id}')
+def get_order(order_id: int):
+    order = orders.get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
 
 @app.post('/orders')
-def create_order(order_json: dict):
-    return orders.post(order_json)
+def create_order(order_data: dict):
+    user_id = order_data.get("user_id")
+    order_details = order_data.get("order_details")
+
+    if not user_id or not order_details:
+        raise HTTPException(status_code=400, detail="Invalid order data")
+
+    order = orders.create_order(order_data)
+
+    return order
 
 @app.put('/orders/{order_id}')
-def update_order(order_id: str, order_json: dict):
-    return orders.put(order_id,order_json)
+def update_order(order_id: int, order_data: dict):
+    user_id = order_data.get("user_id")
+
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Invalid order data")
+
+    order = orders.update_order(order_id, user_id)
+    return order
 
 @app.delete('/orders/{order_id}')
-def delete_order(order_id: str):
-    return orders.delete(order_id)
+def delete_order(order_id: int):
+    success = orders.delete_order(order_id)
 
-create_order = Create_Order(connection)
+    if not success:
+        raise HTTPException(status_code=404, detail="Order not found")
 
-@app.get('/create_orders/{order_id}')
-def get_create_order(order_id:str):
-    return create_order.get(order_id)
+    return {"message": "Order deleted"}
 
-@app.get('/create_order')
-def get_all_create_orders():
-    return create_order.get('*')
-
-@app.post('/create_order')
-def create_create_order(create_order_json: dict):
-    return create_order.post(create_order_json)
-
-@app.put('/create_order/{order_id}')
-def update_create_order(order_id: str, create_order_json: dict):
-    return create_order.put(order_id,create_order_json)
-
-@app.delete('/create_order/{order_id}')
-def delete_create_order(order_id: str):
-    return create_order.delete(order_id)
 
 authentication_function= Authentication_Function(connection)
 @app.get('/authentication_function/{authentication_function_id}')
