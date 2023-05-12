@@ -8,8 +8,8 @@ app = FastAPI()
 connection = pymysql.connect(
     host='localhost',
     user='root',
-    password='Cao.Dien@123',
-    db='mini billing'
+    password='Hong.Lac@2003',
+    db='mini_billing'
 )
 
 user = User(connection)
