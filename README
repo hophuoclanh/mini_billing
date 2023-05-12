@@ -1,0 +1,17 @@
+# Manual
+
+## Installation
+
+...
+
+## Create Jwt Secret
+
+``` bash
+openssl rand -hex 32
+```
+
+## Create Superuser
+
+``` bash
+python .\tools\create_super_user.py --username hophuoclanh --email hophuoclanh@gmail.com --phone 0987654321 --address qwe.rty --password 321
+```
