@@ -8,7 +8,10 @@ def get_all_permissions(db: Session):
     return db.query(PermissionModel).all()
 
 def get_permission_by_id(permission_id: str, db: Session):
-    return db.query(PermissionModel).filter(PermissionModel.permission_id == permission_id).first()
+    permission = db.query(PermissionModel).filter(PermissionModel.permission_id == permission_id).first()
+    if not permission:
+        raise HTTPException(status_code=404, detail="Permission not found.")
+    return permission
 
 def create_permission(permission: CreatePermissionSchema, db: Session) -> PermissionResponseSchema:
     db_permission = PermissionModel(**permission.dict())
@@ -57,7 +60,7 @@ def update_permission(permission_id: str, permission: CreatePermissionSchema, db
     except exc.IntegrityError:
         db.rollback()
         raise HTTPException(status_code=400, detail="Error updating Permission.")
-    return PermissionResponseSchema(**db_permission.__dict__)
+    return PermissionResponseSchema.from_orm(db_permission)
 
 def delete_permission(permission_id: str, db: Session):
     db_permission = db.query(PermissionModel).filter(PermissionModel.permission_id == permission_id).first()
