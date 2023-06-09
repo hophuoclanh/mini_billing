@@ -4,9 +4,11 @@ from domains.authentication.models.position_model import PositionModel
 from domains.authentication.schemas.position_schema import PositionResponseSchema, CreatePositionRequestSchema, UpdatePositionRequestSchema
 from repository import session
 import uuid
+from typing import List
 
-def get_all_positions() -> list[PositionModel]:
-    return session.query(PositionModel).all()
+def get_all_positions() -> List[PositionResponseSchema]:
+    position_models = session.query(PositionModel).all()
+    return [PositionResponseSchema.from_orm(position_model) for position_model in position_models]
 
 def get_position_by_id(position_id: str) -> PositionModel:
     position = session.query(PositionModel).filter(PositionModel.position_id == position_id).first()

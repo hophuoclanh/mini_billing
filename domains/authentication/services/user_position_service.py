@@ -14,7 +14,7 @@ from domains.authentication.models.user_model import UserModel
 from domains.authentication.models.position_model import PositionModel
 from domains.authentication.schemas.user_schema import UserSchema
 from domains.authentication.schemas.position_schema import PositionSchema
-
+from typing import List
 def get_all_user_positions() -> list[UserPositionModel]:
     return session.query(UserPositionModel).all()
 
@@ -24,30 +24,46 @@ def get_user_position_by_id(user_position_id: str) -> UserPositionModel:
         raise HTTPException(status_code=404, detail='User-Position not found')
     return user_position
 
-def create_user_position(user_position: CreateUserPositionRequestSchema, db: Session) -> CreateUserPositionResponseSchema:
+# List of positions in hierarchical order
+POSITIONS = ['admin', 'manager', 'casher']
+
+def create_user_position(user_position: CreateUserPositionRequestSchema, db: Session) -> List[CreateUserPositionResponseSchema]:
+    created_positions = []  # List to store created UserPosition objects
+
     try:
-        # Check if the user and position exist
+        # Check if the user exists
         user = get_user_by_id(user_position.user_id, db)
-        position = get_position_by_id(user_position.position_id, db)
 
-        # Check if the user-position combination already exists
-        existing_user_position = db.query(UserPositionModel).filter(
-            UserPositionModel.user_id == user_position.user_id,
-            UserPositionModel.position_id == user_position.position_id
-        ).first()
+        if user_position.role not in POSITIONS:
+            raise HTTPException(status_code=400, detail="Invalid role")
 
-        if existing_user_position:
-            raise HTTPException(status_code=409, detail="User-Position already exists.")
+        # Start from the assigned position and create user_positions for all following positions
+        for role in POSITIONS[POSITIONS.index(user_position.role):]:
+            # Query the position based on the role
+            position = db.query(PositionModel).filter(PositionModel.role == role).first()
+            if not position:
+                raise HTTPException(status_code=404, detail="Position not found")
 
-        # If not, create a new user-position
-        new_user_position = UserPositionModel(**user_position.dict())
-        new_user_position.user_position_id = str(uuid.uuid4())
+            # Check if the user-position combination already exists
+            existing_user_position = db.query(UserPositionModel).filter(
+                UserPositionModel.user_id == user_position.user_id,
+                UserPositionModel.position_id == position.position_id
+            ).first()
 
-        db.add(new_user_position)
-        db.commit()
-        db.refresh(new_user_position)
+            if existing_user_position:
+                raise HTTPException(status_code=409, detail=f"User-Position for {role} already exists.")
 
-        return CreateUserPositionResponseSchema.from_orm(new_user_position)
+            # If not, create a new user-position
+            new_user_position = UserPositionModel(user_id=user_position.user_id, position_id=position.position_id)
+            new_user_position.user_position_id = str(uuid.uuid4())
+
+            db.add(new_user_position)
+
+            # Add the created user position to the list
+            created_positions.append(CreateUserPositionResponseSchema.from_orm(new_user_position))
+
+        db.commit()  # commit only once at the end
+
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=400, detail="User-Position already exists.")
@@ -55,6 +71,8 @@ def create_user_position(user_position: CreateUserPositionRequestSchema, db: Ses
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+    # Return the list of created user positions
+    return created_positions
 
 def delete_user_position(user_position_id: str) -> None:
     user_position = get_user_position_by_id(user_position_id)
@@ -98,6 +116,12 @@ def get_user_by_id(user_id: str, db: Session) -> UserSchema:
 
 def get_position_by_id(position_id: str, db: Session) -> PositionSchema:
     position = db.query(PositionModel).filter(PositionModel.position_id == position_id).first()
+    if not position:
+        raise HTTPException(status_code=404, detail="Position not found")
+    return PositionSchema.from_orm(position)
+
+def get_position_by_name(role: str, db: Session) -> PositionSchema:
+    position = db.query(PositionModel).filter(PositionModel.role == role).first()
     if not position:
         raise HTTPException(status_code=404, detail="Position not found")
     return PositionSchema.from_orm(position)
