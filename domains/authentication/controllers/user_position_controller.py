@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dependencies.get_current_user import get_current_user
-from domains.authentication.models.user_position_model import UserPositionModel
-from domains.authentication.schemas.user_position_schema import CreateUserPositionResponseSchema, UserPositionSchema, CreateUserPositionRequestSchema
+from domains.authentication.schemas.user_position_schema import UserPositionSchema, CreateUserPositionRequestSchema
 import domains.authentication.services.user_position_service as user_position_service
 from domains.authentication.models.user_model import UserModel
 from domains.authentication.schemas.update_user_position_schema import UpdateUserPositionSchema

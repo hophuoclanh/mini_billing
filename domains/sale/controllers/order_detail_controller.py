@@ -7,7 +7,6 @@ from domains.sale.schemas.order_detail_schema import (
     OrderDetailResponseSchema,
     UpdateOrderDetailRequestSchema
 )
-from domains.sale.models.order_detail_model import OrderDetailModel
 from domains.sale.services.order_detail_service import (
     create_order_detail as cod,
     delete_order_detail as dod,

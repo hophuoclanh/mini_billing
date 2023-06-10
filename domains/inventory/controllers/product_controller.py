@@ -7,7 +7,6 @@ from domains.inventory.schemas.product_schema import (
     ProductResponseSchema,
     UpdateProductRequestSchema
 )
-from domains.inventory.models.product_model import ProductModel
 from domains.inventory.services.product_service import (
     create_product as cp,
     delete_product as dp,

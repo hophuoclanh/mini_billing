@@ -9,7 +9,7 @@ dotenv.load_dotenv()
 
 import argparse
 from domains.authentication.services.user_service import create_user
-from domains.authentication.schemas.user_schema import CreateUserResponseSchema, CreateUserRequestSchema
+from domains.authentication.schemas.user_schema import CreateUserRequestSchema
 
 
 parser = argparse.ArgumentParser(description="Create a new user")

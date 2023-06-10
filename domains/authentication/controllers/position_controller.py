@@ -8,7 +8,6 @@ from domains.authentication.schemas.position_schema import (
     PositionResponseSchema,
     UpdatePositionRequestSchema
 )
-from domains.authentication.models.position_model import PositionModel
 from domains.authentication.services.position_service import (
     create_position,
     delete_position as dp,

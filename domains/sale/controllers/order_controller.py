@@ -8,7 +8,6 @@ from domains.sale.schemas.order_schema import (
     OrderResponseSchema,
     UpdateOrderRequestSchema
 )
-from domains.sale.models.order_model import OrderModel
 from domains.sale.services.order_service import (
     create_order as co,
     delete_order as do,

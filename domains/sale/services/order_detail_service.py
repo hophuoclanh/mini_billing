@@ -6,7 +6,6 @@ from domains.sale.schemas.order_detail_schema import (
     CreateOrderDetailRequestSchema,
     UpdateOrderDetailRequestSchema
 )
-from repository import session
 import uuid
 from sqlalchemy.orm import Session
 from domains.sale.models.order_model import OrderModel

@@ -7,7 +7,6 @@ from domains.inventory.schemas.category_schema import (
     CategoryResponseSchema,
     UpdateCategoryRequestSchema
 )
-from domains.inventory.models.category_model import CategoryModel
 from domains.inventory.services.category_service import (
     create_category as cc,
     delete_category as dc,

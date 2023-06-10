@@ -1,7 +1,7 @@
 import dotenv
 dotenv.load_dotenv()
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from domains.authentication.controllers import router as authentication_controller
 from domains.inventory.controllers import router as inventory_controller
 from domains.sale.controllers import router as sale_controller

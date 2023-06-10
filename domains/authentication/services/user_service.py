@@ -33,6 +33,7 @@ def create_user(user: CreateUserRequestSchema) -> CreateUserResponseSchema:
         return CreateUserResponseSchema(**user_dict)
     except IntegrityError as e:
         # Check if the error is due to a duplicate entry
+        session.rollback()
         if '1062' in str(e.orig):
             # Extract the name of the duplicated field from the error message
             field_match = re.search(r"key '(\w+)_UNIQUE'", str(e.orig))

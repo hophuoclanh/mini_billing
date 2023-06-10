@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
 from domains.inventory.controllers.product_controller import router as product_controller
 from domains.inventory.controllers.category_controller import router as category_controller
 

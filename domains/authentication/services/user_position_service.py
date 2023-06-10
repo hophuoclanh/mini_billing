@@ -1,5 +1,4 @@
 from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException
 from domains.authentication.models.user_position_model import UserPositionModel
 from domains.authentication.schemas.user_position_schema import CreateUserPositionRequestSchema, CreateUserPositionResponseSchema
 from domains.authentication.schemas.update_user_position_schema import UpdateUserPositionSchema
