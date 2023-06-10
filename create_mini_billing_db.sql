@@ -10,6 +10,7 @@ CREATE TABLE `mini_billing`.`user` (
   PRIMARY KEY (`user_id`)
 );
 
+
 CREATE TABLE `mini_billing`.`position` (
   `position_id` VARCHAR(45) NOT NULL,
   `role` VARCHAR(45) NOT NULL,

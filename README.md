@@ -1,21 +1,20 @@
-# mini_billing
-- project_cs311 in SPRING2023
-- In order to run this program, you need to first create mini_billing database in mysql server
-
+# Mini Billing Application
+- SPRING2023 - CS311 Final Project
 
 # Manual
 
 ## Installation
+### Instal Dependencies and Library
 ```
 pip install -r requirements.txt
 ```
 
-## Create database from terminal
+## Create mini billing database 
 - connect to mysql server
 ```
 mysql -u <user-name> -p 
 ```
-- run create_mini_billing_db.sql to create mini_billing database in your mysql server
+- run the script create_mini_billing_db.sql to create mini_billing database in your mysql server
 
 ```
 source create_mini_billling_db.sql
@@ -46,6 +45,8 @@ python .\tools\create_super_user_position.py --user_id <user_id> --role <role>
 #### sample in window
 ``` bash
 python .\tools\create_super_user.py --user_name hothienlac --email hothienlac@gmail.com --phone 0987654321 --address qwe.rty --password 123
+```
+```
 python .\tools\create_super_user_position.py --user_id <user_id> --role <role>
 ```
 
@@ -53,6 +54,9 @@ python .\tools\create_super_user_position.py --user_id <user_id> --role <role>
 
 ``` bash
 python ./tools/create_super_user.py --user_name vpa141203 --email vpa141203@gmail.com --phone 0123456789 --address ttu-plaza --password 123456
+```
+
+```
 python ./tools/create_super_user_position.py --user_id <user_id> --role <role>
 ```
 
