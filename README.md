@@ -10,8 +10,16 @@
 pip install -r requirements.txt
 ```
 
-## Create database
-...
+## Create database from terminal
+- connect to mysql server
+```
+mysql -u <user-name> -p 
+```
+- run create_mini_billing_db.sql to create mini_billing database in your mysql server
+
+```
+source create_mini_billling_db.sql
+```
 
 ## .env file
 - base on the .env.template file, create your own .env file
