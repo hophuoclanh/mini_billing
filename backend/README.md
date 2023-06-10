@@ -1,4 +1,4 @@
-# Mini Billing Application
+# Mini Billing Application - Backend
 - SPRING2023 - CS311 Final Project
 
 # Manual
