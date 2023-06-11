@@ -1,23 +1,19 @@
-import React, { useState } from 'react';
-import Login from './component/login';
-import Dashboard from './component/dashboard';
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 
-const App = () => {
-  const [userRole, setUserRole] = useState('');
+import Createuser from './component/Create/create_user'
+import Main from './route/main'
 
-  const handleLogin = (role) => {
-    setUserRole(role);
-  };
+function App(){
+    return(
+        <div>
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' exact element={<Main/>} />
+                    <Route path='/createuser' exact element={<Createuser/>} />
+                </Routes>
+            </BrowserRouter>
+        </div>
+    )
+}
 
-  return (
-    <div>
-      {userRole ? (
-        <Dashboard userRole={userRole} />
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
-  );
-};
-
-export default App;
+export default App
