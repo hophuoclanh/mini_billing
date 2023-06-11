@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "name": "Dien",
+      "phone": "113",
+      "email": "caodien@gmail.com",
+      "address": "vietnam",
+      "password": "12"
+    },
+    {
+      "name": "Lanh",
+      "phone": "114",
+      "email": "caoLanh@gmail.com",
+      "address": "vietnam",
+      "password": "123"
+    },
+    {
+      "name": "Tinh",
+      "phone": "115",
+      "email": "caodien@gmail.com",
+      "address": "vietnam",
+      "password": "1234"
+    }
+  ]
+}

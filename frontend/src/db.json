@@ -1,0 +1,28 @@
+{
+    "users":[
+        {
+            "name":"Dien",
+            "phone":"0396404444",
+            "email":"caodien2003@gmail.com",
+            "address":" vietnam",
+            "password":"123",
+            "role":"admin"
+        },
+        {
+            "name":"Lanh",
+            "phone":"0396403333",
+            "email":"LanhHo2003@gmail.com",
+            "address":"American",
+            "password":"1234",
+            "role":"manager"
+        },
+        {
+            "name":"Tinh",
+            "phone":"0396402222",
+            "email":"KimTinh2003@gmail.com",
+            "address":" Campuchia",
+            "password":"12345",
+            "role":"staff"
+        }
+    ]
+}
