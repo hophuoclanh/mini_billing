@@ -31,6 +31,9 @@ const Home = () => {
     <div>
       <h1> Hello World </h1>
       <h2>{message ? message : "Fail to connect to backend"}</h2>
+      <h4>
+        {message ? "access token: " + localStorage.getItem("access_token") : ""}
+      </h4>
     </div>
   );
 };
