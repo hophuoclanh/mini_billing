@@ -1,0 +1,21 @@
+# Manual
+
+## Installation
+
+...
+
+## Create Jwt Secret
+
+``` bash
+openssl rand -hex 32
+```
+
+## Create Superuser
+
+``` bash
+python .\tools\create_super_user.py --user_name hothienlac --email hothienlac@gmail.com --phone 0987654321 --address qwe.rty --password 123
+python .\tools\create_super_position.py --role admin
+python .\tools\create_super_user_position.py --user_id <your_id> --role admin
+python .\tools\create_super_permission.py --action create --resource user
+python .\tools\create_super_position_permission.py --position_id <position_id> --permission_id <permission_id>
+```
