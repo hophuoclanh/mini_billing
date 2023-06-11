@@ -1,19 +1,24 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React from "react";
 
-import Createuser from './component/Create/create_user'
-import Main from './route/main'
+import Home from "./components/home";
+import Manager from "./pages/manager";
+import Login from "./components/login";
+import Product from "./components/product";
 
-function App(){
-    return(
-        <div>
-            <BrowserRouter>
-                <Routes>
-                    <Route path='/' exact element={<Main/>} />
-                    <Route path='/createuser' exact element={<Createuser/>} />
-                </Routes>
-            </BrowserRouter>
-        </div>
-    )
+function App() {
+  return (
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" exact element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/manager" element={<Manager />} />
+          <Route path="/product" element={<Product />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
-export default App
+export default App;
