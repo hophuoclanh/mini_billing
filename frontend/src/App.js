@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
-import Login from './component/login';
-import Dashboard from './component/dashboard';
+import {BrwoserRounter, Routers, Router} from 'react-router-dom'
 
-const App = () => {
-  const [userRole, setUserRole] = useState('');
+import Manager from './pages/manager'
+import Login from './component/login'
 
-  const handleLogin = (role) => {
-    setUserRole(role);
-  };
-
-  return (
-    <div>
-      {userRole ? (
-        <Dashboard userRole={userRole} />
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
-  );
-};
-
-export default App;
+function App(){
+    return(
+        <div>
+            <BrwoserRounter>
+                <Routers>
+                    <Router path='/' exact element={<Login />} />
+                    <Router path='/manager'  element={<Manager />} />
+                </Routers>
+            </BrwoserRounter>
+        </div>
+    )
+}
