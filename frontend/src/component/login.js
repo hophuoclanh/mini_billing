@@ -1,35 +1,51 @@
 import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 
-const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+const Login = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const handleLogin = () => {
-    // Xử lý logic đăng nhập và gọi hàm onLogin khi đăng nhập thành công
-    if (username === 'admin' && password === 'password') {
-      onLogin('admin');
-    } else if (username === 'manager' && password === 'password') {
-      onLogin('manager');
-    } else if (username === 'staff' && password === 'password') {
-      onLogin('staff');
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (email === 'example@gmail.com' && password === 'password') {
+      setError('');
+      console.log('Logged in successfully');
+    } else {
+      setError('Wrong password or email');
     }
   };
 
   return (
-    <div>
-      <TextField label="Username" value={username} onChange={handleUsernameChange} />
-      <TextField type="password" label="Password" value={password} onChange={handlePasswordChange} />
-      <Button variant="contained" onClick={handleLogin}>Login</Button>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <TextField
+        label="Email"
+        type="email"
+        value={email}
+        onChange={handleEmailChange}
+        required
+      />
+      <TextField
+        label="Password"
+        type="password"
+        value={password}
+        onChange={handlePasswordChange}
+        required
+      />
+      {error && <Typography color="error">{error}</Typography>}
+      <Button variant="contained" type="submit">
+        Login
+      </Button>
+    </form>
   );
 };
 
