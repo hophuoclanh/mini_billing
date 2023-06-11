@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from dependencies.get_current_user import get_current_user
-from domains.authentication.schemas.user_schema import CreateUserRequestSchema, UserSchema, CreateUserResponseSchema
-from domains.authentication.schemas.update_user_schema import UpdateUserSchema
-from domains.authentication.schemas.permission_schema import PermissionResponseSchema
-from domains.authentication.models.user_model import UserModel
-import domains.authentication.services.user_service as user_service
-from repository import get_db
+from backend.dependencies.get_current_user import get_current_user
+from backend.domains.authentication.schemas.user_schema import CreateUserRequestSchema, UserSchema, CreateUserResponseSchema
+from backend.domains.authentication.schemas.update_user_schema import UpdateUserSchema
+from backend.domains.authentication.schemas.permission_schema import PermissionResponseSchema
+from backend.domains.authentication.models.user_model import UserModel
+import backend.domains.authentication.services.user_service as user_service
+from backend.repository import get_db
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -42,16 +42,17 @@ def create_user(
     created_user = user_service.create_user(user)
     return created_user
 
-@router.put('/{user_id}')
+
+@router.put('/{user_id}', response_model=UserSchema)
 def update_user(
     user_id: str,
     updated_user: UpdateUserSchema,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-) -> None:
+) -> UserSchema:
     if not current_user.has_permission(db, "update", "user"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    user_service.update_user(user_id, updated_user)
+    return user_service.update_user(user_id, updated_user)
 
 @router.delete('/{user_id}')
 def delete_user(

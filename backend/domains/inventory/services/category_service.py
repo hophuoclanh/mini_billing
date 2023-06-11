@@ -1,12 +1,12 @@
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from domains.inventory.models.category_model import CategoryModel
-from domains.inventory.schemas.category_schema import (
+from backend.domains.inventory.models.category_model import CategoryModel
+from backend.domains.inventory.schemas.category_schema import (
     CategoryResponseSchema,
     CreateCategoryRequestSchema,
     UpdateCategoryRequestSchema
 )
-from repository import session
+from backend.repository import session
 import uuid
 
 def get_all_categories() -> list[CategoryModel]:

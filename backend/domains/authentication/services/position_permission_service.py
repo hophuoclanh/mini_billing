@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from domains.authentication.schemas.position_permission_schema import CreatePositionPermissionSchema, PositionPermissionSchema
-from domains.authentication.models.position_permission_model import PositionPermissionModel
+from backend.domains.authentication.schemas.position_permission_schema import CreatePositionPermissionSchema, PositionPermissionSchema
+from backend.domains.authentication.models.position_permission_model import PositionPermissionModel
 from fastapi import HTTPException
-from domains.authentication.models.position_model import PositionModel
-from domains.authentication.models.permission_model import PermissionModel
+from backend.domains.authentication.models.position_model import PositionModel
+from backend.domains.authentication.models.permission_model import PermissionModel
 from sqlalchemy.exc import IntegrityError
 
 def get_position_permission_by_id(position_permission_id: str, db: Session) -> PositionPermissionSchema:

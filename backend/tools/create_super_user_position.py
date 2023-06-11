@@ -8,9 +8,9 @@ import dotenv
 dotenv.load_dotenv()
 
 import argparse
-from domains.authentication.services.user_position_service import create_user_position, get_position_by_name
-from domains.authentication.schemas.user_position_schema import CreateUserPositionRequestSchema
-from repository import SessionLocal
+from backend.domains.authentication.services.user_position_service import create_user_position, get_position_by_name
+from backend.domains.authentication.schemas.user_position_schema import CreateUserPositionRequestSchema
+from backend.repository import SessionLocal
 
 parser = argparse.ArgumentParser(description="Create a new user position")
 

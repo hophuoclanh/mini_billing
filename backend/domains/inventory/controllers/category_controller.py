@@ -1,21 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from domains.authentication.models.user_model import UserModel
-from domains.inventory.schemas.category_schema import (
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.inventory.schemas.category_schema import (
     CreateCategoryRequestSchema,
     CategoryResponseSchema,
     UpdateCategoryRequestSchema
 )
-from domains.inventory.services.category_service import (
+from backend.domains.inventory.services.category_service import (
     create_category as cc,
     delete_category as dc,
     get_category_by_id as gcbi,
     get_all_categories as gac,
     update_category as uc
 )
-from repository import get_db
-from dependencies.get_current_user import get_current_user
+from backend.repository import get_db
+from backend.dependencies.get_current_user import get_current_user
 
 router = APIRouter()
 

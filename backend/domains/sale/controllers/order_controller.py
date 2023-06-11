@@ -1,22 +1,22 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from domains.authentication.models.user_model import UserModel
-from domains.authentication.schemas.user_schema import UserSchema
-from domains.sale.schemas.order_schema import (
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.authentication.schemas.user_schema import UserSchema
+from backend.domains.sale.schemas.order_schema import (
     CreateOrderRequestSchema,
     OrderResponseSchema,
     UpdateOrderRequestSchema
 )
-from domains.sale.services.order_service import (
+from backend.domains.sale.services.order_service import (
     create_order as co,
     delete_order as do,
     get_order_by_id as gobi,
     get_all_orders as gao,
     update_order as uo
 )
-from repository import get_db
-from dependencies.get_current_user import get_current_user
+from backend.repository import get_db
+from backend.dependencies.get_current_user import get_current_user
 
 router = APIRouter()
 

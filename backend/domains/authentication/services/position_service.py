@@ -1,8 +1,8 @@
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from domains.authentication.models.position_model import PositionModel
-from domains.authentication.schemas.position_schema import PositionResponseSchema, CreatePositionRequestSchema, UpdatePositionRequestSchema
-from repository import session
+from backend.domains.authentication.models.position_model import PositionModel
+from backend.domains.authentication.schemas.position_schema import PositionResponseSchema, CreatePositionRequestSchema, UpdatePositionRequestSchema
+from backend.repository import session
 import uuid
 from typing import List
 

@@ -2,19 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 import bcrypt
-from dependencies.get_current_user import get_current_user
-from domains.authentication.controllers.user_controller import router as user_controller
-from domains.authentication.controllers.position_controller import router as position_controller
-from domains.authentication.controllers.user_position_controller import router as user_position_controller
-from domains.authentication.controllers.permission_controller import router as permission_controller
-from domains.authentication.controllers.position_permission_controller import router as position_permission_controller
-from domains.authentication.jwt import create_access_token
-from domains.authentication.models.user_model import UserModel
-from domains.authentication.schemas.authentication_schema import LoginResponseSchema
-from domains.authentication.schemas.user_schema import UserSchema
-from domains.authentication.schemas.permission_schema import PermissionResponseSchema
-from dependencies.get_permission_for_position import get_permissions_for_position
-from repository import get_db  # You should use the get_db function from dependencies
+from backend.dependencies.get_current_user import get_current_user
+from backend.domains.authentication.controllers.user_controller import router as user_controller
+from backend.domains.authentication.controllers.position_controller import router as position_controller
+from backend.domains.authentication.controllers.user_position_controller import router as user_position_controller
+from backend.domains.authentication.controllers.permission_controller import router as permission_controller
+from backend.domains.authentication.controllers.position_permission_controller import router as position_permission_controller
+from backend.domains.authentication.jwt import create_access_token
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.authentication.schemas.authentication_schema import LoginResponseSchema
+from backend.domains.authentication.schemas.user_schema import UserSchema
+from backend.domains.authentication.schemas.permission_schema import PermissionResponseSchema
+from backend.dependencies.get_permission_for_position import get_permissions_for_role
+from backend.repository import get_db  # You should use the get_db function from dependencies
 
 router = APIRouter(tags=['Authentication'])
 router.include_router(user_controller, prefix='/user')
@@ -40,9 +40,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 def get_me(current_user: UserModel = Depends(get_current_user)) -> UserSchema:  # Changed UserSchema to UserModel
     return current_user
 
-@router.get("/position/{position_id}/permissions")
-def read_position_permissions(position_id: str, db: Session = Depends(get_db)) -> list[PermissionResponseSchema]:
-    permissions = get_permissions_for_position(db, position_id)
+@router.get("/position/permissions/{role}")
+def read_role_permissions(role: str, db: Session = Depends(get_db)) -> list[PermissionResponseSchema]:
+    permissions = get_permissions_for_role(db, role)
     return [PermissionResponseSchema.from_orm(permission) for permission in permissions]
+
 
 

@@ -1,6 +1,6 @@
-from domains.sale.controllers import router as sale_controller
-from domains.inventory.controllers import router as inventory_controller
-from domains.authentication.controllers import router as authentication_controller
+from backend.domains.sale.controllers import router as sale_controller
+from backend.domains.inventory.controllers import router as inventory_controller
+from backend.domains.authentication.controllers import router as authentication_controller
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

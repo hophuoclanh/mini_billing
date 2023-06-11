@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from domains.authentication.schemas.position_permission_schema import CreatePositionPermissionSchema, PositionPermissionSchema
-import domains.authentication.services.position_permission_service as position_permission_service
-from dependencies.get_current_user import get_current_user
-from domains.authentication.models.user_model import UserModel
-from repository import get_db
+from backend.domains.authentication.schemas.position_permission_schema import CreatePositionPermissionSchema, PositionPermissionSchema
+import backend.domains.authentication.services.position_permission_service as position_permission_service
+from backend.dependencies.get_current_user import get_current_user
+from backend.domains.authentication.models.user_model import UserModel
+from backend.repository import get_db
 
 router = APIRouter()
 

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from dependencies.get_current_user import get_current_user
-from domains.authentication.schemas.user_position_schema import UserPositionSchema, CreateUserPositionRequestSchema
-import domains.authentication.services.user_position_service as user_position_service
-from domains.authentication.models.user_model import UserModel
-from domains.authentication.schemas.update_user_position_schema import UpdateUserPositionSchema
+from backend.dependencies.get_current_user import get_current_user
+from backend.domains.authentication.schemas.user_position_schema import UserPositionSchema, CreateUserPositionRequestSchema
+import backend.domains.authentication.services.user_position_service as user_position_service
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.authentication.schemas.update_user_position_schema import UpdateUserPositionSchema
 from sqlalchemy.orm import Session
-from repository import get_db
+from backend.repository import get_db
 from typing import List
 
 router = APIRouter()

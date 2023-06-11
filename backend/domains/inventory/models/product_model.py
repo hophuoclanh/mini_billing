@@ -7,7 +7,7 @@ class ProductModel(Base):
     __tablename__ = 'product'
 
     product_id = Column(String(45), primary_key=True)
-    product_name = Column(String(45), nullable=False)
+    product_name = Column(String(45), nullable=False, unique=True)
     description = Column(String(255), nullable=False)
     category_id = Column(String(45), nullable=False)
     unit_price = Column(Float, nullable=False)

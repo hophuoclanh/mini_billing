@@ -1,18 +1,18 @@
 from sqlalchemy.exc import IntegrityError
-from domains.authentication.models.user_position_model import UserPositionModel
-from domains.authentication.schemas.user_position_schema import CreateUserPositionRequestSchema, CreateUserPositionResponseSchema
-from domains.authentication.schemas.update_user_position_schema import UpdateUserPositionSchema
-from repository import session
+from backend.domains.authentication.models.user_position_model import UserPositionModel
+from backend.domains.authentication.schemas.user_position_schema import CreateUserPositionRequestSchema, CreateUserPositionResponseSchema
+from backend.domains.authentication.schemas.update_user_position_schema import UpdateUserPositionSchema
+from backend.repository import session
 from sqlalchemy.orm.exc import NoResultFound
 import uuid
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 # Import your database models and schemas
-from domains.authentication.models.user_model import UserModel
-from domains.authentication.models.position_model import PositionModel
-from domains.authentication.schemas.user_schema import UserSchema
-from domains.authentication.schemas.position_schema import PositionSchema
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.authentication.models.position_model import PositionModel
+from backend.domains.authentication.schemas.user_schema import UserSchema
+from backend.domains.authentication.schemas.position_schema import PositionSchema
 from typing import List
 def get_all_user_positions() -> list[UserPositionModel]:
     return session.query(UserPositionModel).all()

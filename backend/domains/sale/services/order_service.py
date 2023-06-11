@@ -1,12 +1,12 @@
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from domains.sale.models.order_model import OrderModel
-from domains.sale.schemas.order_schema import (
+from backend.domains.sale.models.orders_model import OrderModel
+from backend.domains.sale.schemas.order_schema import (
     OrderResponseSchema,
     CreateOrderRequestSchema,
     UpdateOrderRequestSchema
 )
-from repository import session
+from backend.repository import session
 import uuid
 from sqlalchemy.orm import Session
 

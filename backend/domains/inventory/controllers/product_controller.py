@@ -1,21 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from domains.authentication.models.user_model import UserModel
-from domains.inventory.schemas.product_schema import (
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.inventory.schemas.product_schema import (
     CreateProductRequestSchema,
     ProductResponseSchema,
-    UpdateProductRequestSchema
+    UpdateProductRequestSchema,
+    ProductListResponseSchema
 )
-from domains.inventory.services.product_service import (
-    create_product as cp,
+from backend.domains.inventory.services.product_service import (
+    create_products as cp,
     delete_product as dp,
     get_product_by_id as gpid,
     get_all_products as gap,
-    update_product as up
+    update_product as up,
+    get_products_by_category_name
 )
-from repository import get_db
-from dependencies.get_current_user import get_current_user
+from backend.repository import get_db
+from backend.dependencies.get_current_user import get_current_user
 
 router = APIRouter()
 
@@ -42,15 +44,15 @@ def get_product_by_id(
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
-@router.post("/", response_model=ProductResponseSchema)
-def create_product(
-    product: CreateProductRequestSchema,
+@router.post("/", response_model=ProductListResponseSchema)
+def create_products(
+    product_request: CreateProductRequestSchema,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
 ):
     if not current_user.has_permission(db, 'create', 'product'):
-        raise HTTPException(status_code=403, detail="User does not have permission to create a product")
-    return cp(product=product)
+        raise HTTPException(status_code=403, detail="User does not have permission to create products")
+    return {"products": cp(product_request=product_request)}
 
 @router.put("/{product_id}", response_model=ProductResponseSchema)
 def update_product(
@@ -76,3 +78,14 @@ def delete_product(
         raise HTTPException(status_code=403, detail="User does not have permission to delete a product")
     dp(product_id=product_id)
     return {"detail": "Product deleted"}
+
+@router.get("/category/{category_name}/products", response_model=list[ProductResponseSchema])
+async def read_products_by_category_name(
+    category_name: str,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+):
+    if not current_user.has_permission(db, 'get', 'product'):
+        raise HTTPException(status_code=403, detail="User does not have permission to get products by category")
+    products = get_products_by_category_name(category_name, db)
+    return products

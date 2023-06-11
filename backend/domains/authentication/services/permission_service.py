@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import exc
 from fastapi import HTTPException
-from domains.authentication.models.permission_model import PermissionModel
-from domains.authentication.schemas.permission_schema import CreatePermissionSchema, PermissionResponseSchema
+from backend.domains.authentication.models.permission_model import PermissionModel
+from backend.domains.authentication.schemas.permission_schema import CreatePermissionSchema, PermissionResponseSchema
 
 def get_all_permissions(db: Session):
     return db.query(PermissionModel).all()

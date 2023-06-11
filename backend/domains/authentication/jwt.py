@@ -1,9 +1,9 @@
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 from fastapi import HTTPException, status
 import os
 from datetime import timedelta, datetime
-from domains.authentication.models.user_model import UserModel
-from domains.authentication.services.user_service import get_user_by_id
+from backend.domains.authentication.models.user_model import UserModel
+from backend.domains.authentication.services.user_service import get_user_by_id
 
 secret = os.getenv('JWT_SECRET')
 if not secret:
