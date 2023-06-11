@@ -1,51 +1,57 @@
 import React, { useState } from 'react';
-import { Button, TextField, Typography } from '@mui/material';
+import { TextField, Button, Typography } from '@mui/material';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
+  const handleLogin = () => {
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+    if (email === 'example@example.com' && password === 'password123') {
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (email === 'example@gmail.com' && password === 'password') {
-      setError('');
       console.log('Logged in successfully');
     } else {
+
       setError('Wrong password or email');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+      }}
+    >
+      <Typography variant="h4" gutterBottom>
+        Login
+      </Typography>
       <TextField
         label="Email"
-        type="email"
         value={email}
-        onChange={handleEmailChange}
-        required
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ marginBottom: '16px' }}
       />
       <TextField
         label="Password"
         type="password"
         value={password}
-        onChange={handlePasswordChange}
-        required
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ marginBottom: '16px' }}
       />
-      {error && <Typography color="error">{error}</Typography>}
-      <Button variant="contained" type="submit">
+      {error && (
+        <Typography variant="body1" color="error" style={{ marginBottom: '16px' }}>
+          {error}
+        </Typography>
+      )}
+      <Button variant="contained" onClick={handleLogin}>
         Login
       </Button>
-    </form>
+    </div>
   );
 };
 
