@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-// import { config } from "dotenv";
-// config();
-// console.log(process.env.API_URL);
+import config from "./config.js";
 
 const Home = () => {
-  console.log("Hello World");
   const [message, setMessage] = useState("");
 
   const getWelcomeMessage = async () => {
@@ -15,12 +12,9 @@ const Home = () => {
         "Content-Type": "application/json",
       },
     };
-    const response = await fetch("http://localhost:9000/", requestOptions);
-    // const response = await fetch("/", requestOptions);
-    console.log(response);
-    const data = await response.json();
 
-    console.log(data);
+    const response = await fetch(config.API_URL_ROOT + "/", requestOptions);
+    const data = await response.json();
 
     if (!response.ok) {
       console.log("something messed up");
@@ -36,8 +30,7 @@ const Home = () => {
   return (
     <div>
       <h1> Hello World </h1>
-      <h2> Successfully connected to backend api </h2>
-      <h2> {message} </h2>
+      <h2>{message ? message : "Fail to connect to backend"}</h2>
     </div>
   );
 };
