@@ -8,6 +8,9 @@ CREATE TABLE `mini_billing`.`user` (
   `address` VARCHAR(255) NOT NULL,
   `password` VARCHAR(72) NOT NULL,
   PRIMARY KEY (`user_id`)
+  UNIQUE (`user_name`),
+  UNIQUE (`email`),
+  UNIQUE (`phone`)
 );
 
 
@@ -27,7 +30,7 @@ CREATE TABLE `mini_billing`.`permission` (
 
 CREATE TABLE `mini_billing`.`user_position` (
 	`user_position_id` VARCHAR(45) NOT NULL,
-    
+
 	`user_id` VARCHAR(45) NOT NULL,
 	`position_id` VARCHAR(45) NOT NULL,
 	PRIMARY KEY (`user_position_id`),
@@ -38,7 +41,7 @@ CREATE TABLE `mini_billing`.`user_position` (
 
 CREATE TABLE `mini_billing`.`position_permission` (
 	`position_permission_id` VARCHAR(45) NOT NULL,
-    
+
 	`position_id` VARCHAR(45) NOT NULL,
 	`permission_id` VARCHAR(45) NOT NULL,
 	PRIMARY KEY (`position_permission_id`),
@@ -47,11 +50,11 @@ CREATE TABLE `mini_billing`.`position_permission` (
 );
 
   
-CREATE TABLE `mini_billing`.`order` (
+CREATE TABLE `mini_billing`.`orders` (
 	`order_id` VARCHAR(45) NOT NULL,
 	`date` TIMESTAMP NOT NULL,
   	`total_amount` FLOAT NOT NULL,
-    
+
 	`user_id` VARCHAR(45) NOT NULL,
 	PRIMARY KEY (`order_id`),
 	FOREIGN KEY(`user_id`) REFERENCES `user` (`user_id`)
@@ -86,7 +89,7 @@ CREATE TABLE `mini_billing`.`order_detail`(
 	`order_id` varchar(45) NOT NULL,
 	`product_id` varchar(45) NOT NULL,
 	PRIMARY KEY (`order_detail_id`),
-	FOREIGN KEY(`order_id`) REFERENCES `order` (`order_id`),
+	FOREIGN KEY(`order_id`) REFERENCES `orders` (`order_id`),
 	FOREIGN KEY(`product_id`) REFERENCES `product` (`product_id`)
 );
 
