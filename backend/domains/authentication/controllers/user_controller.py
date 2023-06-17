@@ -12,7 +12,7 @@ from typing import List
 router = APIRouter()
 
 @router.get('')
-def get_user(
+def get_all_user(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> list[UserSchema]:

@@ -10,10 +10,9 @@ dotenv.load_dotenv()
 
 app = FastAPI(title='Mini Billing')
 
-
-app.include_router(authentication_controller, prefix='/authentication')
-app.include_router(inventory_controller, prefix='/inventory')
-app.include_router(sale_controller, prefix='/sale')
+app.include_router(authentication_controller, prefix='/v1/authentication')
+app.include_router(inventory_controller, prefix='/v1/inventory')
+app.include_router(sale_controller, prefix='/v1/sale')
 
 app.add_middleware(
     CORSMiddleware,
