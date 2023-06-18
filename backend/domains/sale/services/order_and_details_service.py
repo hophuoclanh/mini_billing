@@ -57,7 +57,7 @@ def create_order_and_details(order_request: CreateOrderAndDetailsRequestSchema, 
         db.refresh(order)
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during creation of Order and OrderDetails.")
+        raise Exception("Error occurred during creation of Order and OrderDetails.")
     return {
         **OrderResponseSchema.from_orm(order).dict(),
         'products': products,
@@ -95,7 +95,7 @@ def get_orders_by_time_range(start_date: datetime, end_date: datetime, db: Sessi
                     'total_money': detail.quantity * product.unit_price,
                 })
             else:
-                raise HTTPException(status_code=400, detail="Product information incomplete.")
+                raise Exception("Product information incomplete.")
 
         # add the detailed order to the results
         detailed_orders.append({

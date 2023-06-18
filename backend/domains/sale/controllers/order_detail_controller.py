@@ -19,7 +19,7 @@ from backend.dependencies.get_current_user import get_current_user
 
 router = APIRouter()
 
-@router.get("/", response_model=List[OrderDetailResponseSchema])
+@router.get("", response_model=List[OrderDetailResponseSchema])
 def get_all_order_details(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
@@ -42,7 +42,7 @@ def get_order_detail_by_id(
         raise HTTPException(status_code=404, detail="Order detail not found")
     return db_order_detail
 
-@router.post("/", response_model=OrderDetailResponseSchema)
+@router.post("", response_model=OrderDetailResponseSchema)
 def create_order_detail(
     order_detail: CreateOrderDetailRequestSchema,
     db: Session = Depends(get_db),
@@ -50,7 +50,10 @@ def create_order_detail(
 ):
     if not current_user.has_permission(db, 'create', 'order_detail'):
         raise HTTPException(status_code=403, detail="User does not have permission to create an order detail")
-    return cod(order_detail=order_detail, db=db)
+    new_order_detail = cod(order_detail=order_detail, db=db)
+    if new_order_detail is None:
+        raise HTTPException(status_code=400, detail="Error occurred during creation of OrderDetail.")
+    return new_order_detail
 
 @router.put("/{order_detail_id}", response_model=OrderDetailResponseSchema)
 def update_order_detail(
@@ -63,7 +66,7 @@ def update_order_detail(
         raise HTTPException(status_code=403, detail="User does not have permission to update an order detail")
     updated_order_detail = uod(order_detail_id=order_detail_id, updated_order_detail=order_detail, db=db)
     if updated_order_detail is None:
-        raise HTTPException(status_code=404, detail="Order detail not found")
+        raise HTTPException(status_code=404, detail="Order detail not found or error occurred during update.")
     return updated_order_detail
 
 @router.delete("/{order_detail_id}")
@@ -74,5 +77,7 @@ def delete_order_detail(
 ):
     if not current_user.has_permission(db, 'delete', 'order_detail'):
         raise HTTPException(status_code=403, detail="User does not have permission to delete an order detail")
-    dod(order_detail_id=order_detail_id)
+    is_deleted = dod(order_detail_id=order_detail_id, db=db)
+    if not is_deleted:
+        raise HTTPException(status_code=404, detail="Order detail not found or error occurred during deletion.")
     return {"detail": "Order detail deleted"}

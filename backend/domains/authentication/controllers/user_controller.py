@@ -8,6 +8,7 @@ import backend.domains.authentication.services.user_service as user_service
 from backend.repository import get_db
 from sqlalchemy.orm import Session
 from typing import List
+from backend.domains.authentication.exceptions import UserNotFoundError,UserAlreadyExistsError
 
 router = APIRouter()
 
@@ -63,8 +64,10 @@ def update_user(
         raise HTTPException(status_code=403, detail="Permission denied")
     try:
         return user_service.update_user(user_id, updated_user)
-    except ValueError as e:
+    except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except UserAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

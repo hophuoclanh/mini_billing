@@ -21,7 +21,7 @@ from backend.dependencies.get_current_user import get_current_user
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ProductResponseSchema])
+@router.get("", response_model=List[ProductResponseSchema])
 def get_all_products(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
@@ -46,7 +46,7 @@ def get_product_by_id(
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
-@router.post("/", response_model=ProductListResponseSchema)
+@router.post("", response_model=ProductListResponseSchema)
 def create_products(
     product_request: CreateProductRequestSchema,
     db: Session = Depends(get_db),

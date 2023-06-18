@@ -1,5 +1,4 @@
 from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException
 from backend.domains.inventory.models.category_model import CategoryModel
 from backend.domains.inventory.schemas.category_schema import (
     CategoryResponseSchema,
@@ -11,17 +10,16 @@ import uuid
 
 def get_all_categories() -> list[CategoryModel]:
     return session.query(CategoryModel).all()
+
 def get_category_by_id(category_id: str) -> CategoryModel:
     category = session.query(CategoryModel).filter(CategoryModel.category_id == category_id).first()
-    if not category:
-        raise HTTPException(status_code=404, detail='Category not found')
     return category
 
 def create_category(category: CreateCategoryRequestSchema) -> CategoryResponseSchema:
     category_dict = category.dict()
     existing_category = session.query(CategoryModel).filter(CategoryModel.category_name == category_dict['category_name']).first()
     if existing_category:
-        raise HTTPException(status_code=400, detail="Category already exists.")
+        return None
     category_dict['category_id'] = str(uuid.uuid4())
     category = CategoryModel(**category_dict)
     session.add(category)
@@ -30,13 +28,13 @@ def create_category(category: CreateCategoryRequestSchema) -> CategoryResponseSc
         session.refresh(category)
     except IntegrityError:
         session.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during creation of Category.")
+        return None
     return CategoryResponseSchema(**category_dict)
 
 def update_category(category_id: str, updated_category: UpdateCategoryRequestSchema) -> CategoryResponseSchema:
     category = session.query(CategoryModel).filter(CategoryModel.category_id == category_id).first()
     if not category:
-        raise HTTPException(status_code=404, detail='Category not found')
+        return None
     for key, value in updated_category.dict().items():
         setattr(category, key, value)
     try:
@@ -44,16 +42,17 @@ def update_category(category_id: str, updated_category: UpdateCategoryRequestSch
         session.refresh(category)
     except IntegrityError:
         session.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during update of Category.")
+        return None
     return CategoryResponseSchema.from_orm(category)
 
-def delete_category(category_id: str) -> None:
+def delete_category(category_id: str) -> bool:
     category = session.query(CategoryModel).filter(CategoryModel.category_id == category_id).first()
     if not category:
-        raise HTTPException(status_code=404, detail='Category not found')
+        return False
     session.delete(category)
     try:
         session.commit()
     except IntegrityError:
         session.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during deletion of Category.")
+        return False
+    return True

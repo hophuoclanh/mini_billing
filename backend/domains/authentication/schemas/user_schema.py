@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+import string
+from typing import re
+from pydantic import BaseModel, Field, validator
 import uuid
 
 class UserSchema(BaseModel):
@@ -13,11 +15,11 @@ class UserSchema(BaseModel):
 
 # Use this schema for incoming data
 class CreateUserRequestSchema(BaseModel):
-    user_name: str
-    email: str
-    phone: str
-    address: str
-    password: str
+    user_name: str = Field(..., min_length=1, max_length=45)
+    email: str = Field(..., min_length=5, max_length=45)  # EmailStr doesn't support max_length
+    phone: str = Field(..., min_length=1, max_length=45, regex=r"^\S+$")  # No whitespace allowed, length 1-45
+    address: str = Field(..., min_length=1, max_length=255)
+    password: str = Field(..., min_length=1, max_length=72)  # Minimum password length 1
 
 # Use this schema for outgoing data
 class CreateUserResponseSchema(BaseModel):

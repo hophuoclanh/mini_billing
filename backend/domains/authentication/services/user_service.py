@@ -6,6 +6,9 @@ from backend.domains.authentication.schemas.user_schema import UserSchema, Creat
 from backend.domains.authentication.schemas.update_user_schema import UpdateUserSchema
 from backend.repository import session
 import uuid
+from backend.domains.authentication.exceptions import UserAlreadyExistsError
+from sqlalchemy.exc import SQLAlchemyError
+
 
 def get_all_users() -> list[UserModel]:
     return session.query(UserModel).all()
@@ -44,7 +47,6 @@ def create_user(user: CreateUserRequestSchema) -> CreateUserResponseSchema:
     except Exception as e:
         raise Exception('Error occurred during user creation')
 
-
 def update_user(user_id: str, updated_user: UpdateUserSchema) -> UserSchema:
     user = get_user_by_id(user_id)
     if updated_user.user_name is not None:
@@ -64,11 +66,22 @@ def update_user(user_id: str, updated_user: UpdateUserSchema) -> UserSchema:
         session.refresh(user)
     except IntegrityError as e:
         session.rollback()
-        raise Exception('Error occurred during user update')
+        if 'duplicate key value violates unique constraint' in str(e.orig):
+            field_match = re.search(r'DETAIL:  Key \((.*?)\)=', str(e.orig))
+            if field_match:
+                field_name = field_match.group(1)
+                raise UserAlreadyExistsError(f'{field_name} already exists')  # <- Raise the custom exception here
+            else:
+                raise UserAlreadyExistsError('User already exists')
+    except SQLAlchemyError as e:
+        session.rollback()
+        print(f"SQLAlchemy error: {str(e)}")
     except Exception as e:
         session.rollback()
-        raise Exception('Error occurred during user update')
+        raise Exception(f'Unexpected error occurred during user update: {str(e)}')
+
     return UserSchema.from_orm(user)
+
 
 def delete_user(user_id: str) -> None:
     user = get_user_by_id(user_id)

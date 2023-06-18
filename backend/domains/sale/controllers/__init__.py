@@ -16,17 +16,20 @@ router = APIRouter(tags=['Sale'])
 router.include_router(order_controller, prefix='/order')
 router.include_router(order_detail_controller, prefix='/order_detail')
 
-@router.post("/")
+@router.post("")
 def create_super_order(
     order: CreateOrderAndDetailsRequestSchema,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
 ):
-    if not current_user.has_permission(db, 'create', 'order'):
-        raise HTTPException(status_code=403, detail="User does not have permission to create an order")
-    result = create_order_and_details(order_request=order, db=db, current_user=current_user)
-    print(result)
-    return result
+    try:
+        if not current_user.has_permission(db, 'create', 'order'):
+            raise HTTPException(status_code=403, detail="User does not have permission to create an order")
+        result = create_order_and_details(order_request=order, db=db, current_user=current_user)
+        print(result)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/orders/time_range")
 async def get_orders_by_time_range(
@@ -35,11 +38,14 @@ async def get_orders_by_time_range(
         db: Session = Depends(get_db),
         current_user: UserModel = Depends(get_current_user)
 ):
-    if not current_user.has_permission(db, 'get', 'order'):
-        raise HTTPException(status_code=403, detail="User does not have permission to get orders")
+    try:
+        if not current_user.has_permission(db, 'get', 'order'):
+            raise HTTPException(status_code=403, detail="User does not have permission to get orders")
 
-    orders = gobtr(start_date, end_date, db)
-    return orders
+        orders = gobtr(start_date, end_date, db)
+        return orders
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 

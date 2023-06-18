@@ -53,7 +53,10 @@ def create_category(
 ):
     if not current_user.has_permission(db, 'create', 'category'):
         raise HTTPException(status_code=403, detail="User does not have permission to create a category")
-    return cc(category=category)
+    new_category = cc(category=category)
+    if new_category is None:
+        raise HTTPException(status_code=400, detail="Category already exists or an error occurred during creation.")
+    return new_category
 
 @router.put("/{category_id}", response_model=CategoryResponseSchema)
 def update_category(
@@ -66,7 +69,7 @@ def update_category(
         raise HTTPException(status_code=403, detail="User does not have permission to update a category")
     updated_category = uc( category_id=category_id,  updated_category=category)
     if updated_category is None:
-        raise HTTPException(status_code=404, detail="Category not found")
+        raise HTTPException(status_code=404, detail="Category not found or error occurred during update.")
     return updated_category
 
 @router.delete("/{category_id}")
@@ -77,5 +80,6 @@ def delete_category(
 ):
     if not current_user.has_permission(db, 'delete', 'category'):
         raise HTTPException(status_code=403, detail="User does not have permission to delete a category")
-    dc(category_id=category_id)
+    if not dc(category_id=category_id):
+        raise HTTPException(status_code=400, detail="Category not found or error occurred during deletion.")
     return {"detail": "Category deleted"}

@@ -16,7 +16,7 @@ def get_all_order_details(db: Session) -> list[OrderDetailModel]:
 def get_order_detail_by_id(order_detail_id: str, db: Session) -> OrderDetailModel:
     order_detail = db.query(OrderDetailModel).filter(OrderDetailModel.order_detail_id == order_detail_id).first()
     if not order_detail:
-        raise HTTPException(status_code=404, detail='Order detail not found')
+        return None
     return OrderDetailResponseSchema.from_orm(order_detail)
 
 def create_order_detail(order_detail: CreateOrderDetailRequestSchema, db: Session) -> OrderDetailResponseSchema:
@@ -40,31 +40,32 @@ def create_order_detail(order_detail: CreateOrderDetailRequestSchema, db: Sessio
         db.refresh(order_detail)
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during creation of OrderDetail.")
+        return None
     return OrderDetailResponseSchema.from_orm(order_detail)
-
 
 def update_order_detail(order_detail_id: str, updated_order_detail: UpdateOrderDetailRequestSchema, db: Session) -> OrderDetailResponseSchema:
     order_detail = db.query(OrderDetailModel).filter(OrderDetailModel.order_detail_id == order_detail_id).first()
     if not order_detail:
-        raise HTTPException(status_code=404, detail='Order detail not found')
+        return None
     for key, value in updated_order_detail.dict().items():
         setattr(order_detail, key, value)
+
     try:
         db.commit()
         db.refresh(order_detail)
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during update of OrderDetail.")
+        return None
     return OrderDetailResponseSchema.from_orm(order_detail)
 
-def delete_order_detail(order_detail_id: str, db: Session) -> None:
+def delete_order_detail(order_detail_id: str, db: Session) -> bool:
     order_detail = db.query(OrderDetailModel).filter(OrderDetailModel.order_detail_id == order_detail_id).first()
     if not order_detail:
-        raise HTTPException(status_code=404, detail='Order detail not found')
+        return False
     db.delete(order_detail)
     try:
         db.commit()
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Error occurred during deletion of OrderDetail.")
+        return False
+    return True
