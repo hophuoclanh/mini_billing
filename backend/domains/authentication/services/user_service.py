@@ -73,9 +73,8 @@ def update_user(user_id: str, updated_user: UpdateUserSchema) -> UserSchema:
                 raise UserAlreadyExistsError(f'{field_name} already exists')  # <- Raise the custom exception here
             else:
                 raise UserAlreadyExistsError('User already exists')
-    except SQLAlchemyError as e:
-        session.rollback()
-        print(f"SQLAlchemy error: {str(e)}")
+        else:
+            raise Exception('Error occurred during user update')
     except Exception as e:
         session.rollback()
         raise Exception(f'Unexpected error occurred during user update: {str(e)}')
