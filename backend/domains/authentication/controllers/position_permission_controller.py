@@ -25,7 +25,10 @@ def get_position_permission_by_id(
 ):
     if not current_user.has_permission(db, "get", "position_permission_by_id"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    return position_permission_service.get_position_permission_by_id(position_permission_id, db)
+    position_permission = position_permission_service.get_position_permission_by_id(position_permission_id, db)
+    if position_permission is None:
+        raise HTTPException(status_code=404, detail="Position Permission not found")
+    return position_permission
 
 @router.post("/", response_model=PositionPermissionSchema)
 def create_position_permission(
@@ -35,11 +38,10 @@ def create_position_permission(
 ):
     if not current_user.has_permission(db, "create", "position_permission"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    try:
-        return position_permission_service.create_position_permission(position_permission, db)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
+    position_permission_db = position_permission_service.create_position_permission(position_permission, db)
+    if position_permission_db is None:
+        raise HTTPException(status_code=400, detail="Error creating Position Permission or Position Permission already exists.")
+    return position_permission_db
 
 @router.put("/{position_permission_id}")
 def update_position_permission(
@@ -50,7 +52,10 @@ def update_position_permission(
 ):
     if not current_user.has_permission(db, "update", "position_permission"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    return position_permission_service.update_position_permission(position_permission_id, position_permission, db)
+    updated_position_permission = position_permission_service.update_position_permission(position_permission_id, position_permission, db)
+    if updated_position_permission is None:
+        raise HTTPException(status_code=400, detail="Error updating Position Permission or Position Permission already exists.")
+    return updated_position_permission
 
 @router.delete("/{position_permission_id}")
 def delete_position_permission(
@@ -60,4 +65,5 @@ def delete_position_permission(
 ):
     if not current_user.has_permission(db, "delete", "position_permission"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    return position_permission_service.delete_position_permission(position_permission_id, db)
+    if not position_permission_service.delete_position_permission(position_permission_id, db):
+        raise HTTPException(status_code=400, detail="Error deleting Position Permission")

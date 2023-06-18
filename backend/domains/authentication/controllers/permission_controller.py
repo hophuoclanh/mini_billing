@@ -33,7 +33,10 @@ def get_permission_by_id(
             detail="User does not have the required permissions",
         )
 
-    return permission_service.get_permission_by_id(permission_id, db)
+    permission = permission_service.get_permission_by_id(permission_id, db)
+    if permission is None:
+        raise HTTPException(status_code=404, detail="Permission not found")
+    return permission
 
 @router.post("/", response_model=PermissionResponseSchema)
 def create_permission(
@@ -47,7 +50,10 @@ def create_permission(
             detail="User does not have the required permissions",
         )
 
-    return permission_service.create_permission(permission=permission, db=db)
+    new_permission = permission_service.create_permission(permission=permission, db=db)
+    if new_permission is None:
+        raise HTTPException(status_code=400, detail="Permission already exists or an error occurred during creation.")
+    return new_permission
 
 @router.put("/{permission_id}")
 def update_permission(
@@ -62,7 +68,10 @@ def update_permission(
             detail="User does not have the required permissions",
         )
 
-    return permission_service.update_permission(permission_id, permission, db)
+    updated_permission = permission_service.update_permission(permission_id, permission, db)
+    if updated_permission is None:
+        raise HTTPException(status_code=400, detail="Permission not found or updated permission already exists.")
+    return updated_permission
 
 @router.delete("/{permission_id}")
 def delete_permission(
@@ -76,4 +85,6 @@ def delete_permission(
             detail="User does not have the required permissions",
         )
 
-    return permission_service.delete_permission(permission_id, db)
+    if not permission_service.delete_permission(permission_id, db):
+        raise HTTPException(status_code=400, detail="Permission not found or error occurred during deletion.")
+    return {"detail": "Permission successfully deleted"}

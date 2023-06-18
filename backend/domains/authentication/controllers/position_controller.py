@@ -40,15 +40,11 @@ def get_position_by_id(
     current_user: UserModel = Depends(get_current_user)
 ):
     if not current_user.has_permission(db, "get", "position_by_id"):
-        raise HTTPException(
-            status_code=403,
-            detail="User does not have the required permissions",
-        )
-
-    db_position = fetch_position_by_id(position_id)
-    if db_position is None:
+        raise HTTPException(status_code=403, detail="User does not have the required permissions")
+    position = fetch_position_by_id(position_id)
+    if not position:
         raise HTTPException(status_code=404, detail="Position not found")
-    return db_position
+    return position
 
 @router.delete("/{position_id}")
 def delete_position(
@@ -57,12 +53,10 @@ def delete_position(
     current_user: UserModel = Depends(get_current_user)
 ):
     if not current_user.has_permission(db, "delete", "position"):
-        raise HTTPException(
-            status_code=403,
-            detail="User does not have the required permissions",
-        )
-
-    dp(position_id=position_id)  # calls the imported function
+        raise HTTPException(status_code=403, detail="User does not have the required permissions")
+    position = dp(position_id=position_id)
+    if not position:
+        raise HTTPException(status_code=404, detail="Position not found or error occurred during deletion")
     return {"detail": "Position deleted"}
 
 @router.post("/", response_model=PositionResponseSchema)
@@ -72,12 +66,11 @@ def create_new_position(
     current_user: UserModel = Depends(get_current_user)
 ):
     if not current_user.has_permission(db, "create", "position"):
-        raise HTTPException(
-            status_code=403,
-            detail="User does not have the required permissions",
-        )
-
-    return create_position(position=position)
+        raise HTTPException(status_code=403, detail="User does not have the required permissions")
+    created_position = create_position(position)
+    if not created_position:
+        raise HTTPException(status_code=400, detail="Position already exists or an error occurred during creation")
+    return created_position
 
 @router.put("/{position_id}", response_model=PositionResponseSchema)
 def update_position(
@@ -87,12 +80,8 @@ def update_position(
     current_user: UserModel = Depends(get_current_user)
 ):
     if not current_user.has_permission(db, "update", "position"):
-        raise HTTPException(
-            status_code=403,
-            detail="User does not have the required permissions",
-        )
-
+        raise HTTPException(status_code=403, detail="User does not have the required permissions")
     updated_position = up(position_id=position_id,  updated_position=position)
-    if updated_position is None:
-        raise HTTPException(status_code=404, detail="Position not found")
+    if not updated_position:
+        raise HTTPException(status_code=404, detail="Position not found or already exists")
     return updated_position

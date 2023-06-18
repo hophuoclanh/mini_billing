@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 import re
 from sqlalchemy.exc import IntegrityError
 import bcrypt
@@ -14,7 +13,7 @@ def get_all_users() -> list[UserModel]:
 def get_user_by_id(user_id: str) -> UserModel:
     user = session.query(UserModel).filter(UserModel.user_id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail='User not found')
+        raise ValueError('User not found')
     return user
 
 def create_user(user: CreateUserRequestSchema) -> CreateUserResponseSchema:
@@ -32,27 +31,22 @@ def create_user(user: CreateUserRequestSchema) -> CreateUserResponseSchema:
         # Return the created user
         return CreateUserResponseSchema(**user_dict)
     except IntegrityError as e:
-        # Check if the error is due to a duplicate entry
         session.rollback()
         if '1062' in str(e.orig):
-            # Extract the name of the duplicated field from the error message
             field_match = re.search(r"key '(\w+)_UNIQUE'", str(e.orig))
             if field_match:
                 field_name = field_match.group(1)
-                raise HTTPException(status_code=409, detail=f'{field_name} already exists')
+                raise ValueError(f'{field_name} already exists')
             else:
-                raise HTTPException(status_code=409, detail='User already exists')
+                raise ValueError('User already exists')
         else:
-            raise HTTPException(status_code=500, detail='Error occurred during user creation')
+            raise Exception('Error occurred during user creation')
     except Exception as e:
-        raise HTTPException(status_code=500, detail='Error occurred during user creation')
+        raise Exception('Error occurred during user creation')
 
 
 def update_user(user_id: str, updated_user: UpdateUserSchema) -> UserSchema:
-    user = session.query(UserModel).filter(UserModel.user_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail='User not found')
-
+    user = get_user_by_id(user_id)
     if updated_user.user_name is not None:
         user.user_name = updated_user.user_name
     if updated_user.email is not None:
@@ -70,22 +64,20 @@ def update_user(user_id: str, updated_user: UpdateUserSchema) -> UserSchema:
         session.refresh(user)
     except IntegrityError as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail='Error occurred during user update')
+        raise Exception('Error occurred during user update')
     except Exception as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail='Error occurred during user update')
+        raise Exception('Error occurred during user update')
     return UserSchema.from_orm(user)
 
 def delete_user(user_id: str) -> None:
-    user = session.query(UserModel).filter(UserModel.user_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail='User not found')
+    user = get_user_by_id(user_id)
     try:
         session.delete(user)
         session.commit()
     except IntegrityError as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail='Error occurred during user deletion')
+        raise Exception('Error occurred during user deletion')
     except Exception as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail='Error occurred during user deletion')
+        raise Exception('Error occurred during user deletion')

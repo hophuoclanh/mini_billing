@@ -29,6 +29,8 @@ def get_all_products(
     if not current_user.has_permission(db, 'get', 'product'):
         raise HTTPException(status_code=403, detail="User does not have permission to get products")
     products = gap(db)
+    if products is None:
+        raise HTTPException(status_code=400, detail="Some products have missing description or category_id.")
     return products
 
 @router.get("/{product_id}", response_model=ProductResponseSchema)
@@ -52,7 +54,10 @@ def create_products(
 ):
     if not current_user.has_permission(db, 'create', 'product'):
         raise HTTPException(status_code=403, detail="User does not have permission to create products")
-    return {"products": cp(product_request=product_request)}
+    created_products = cp(product_request=product_request)
+    if created_products is None:
+        raise HTTPException(status_code=400, detail="Product already exists or an error occurred during creation.")
+    return {"products": created_products}
 
 @router.put("/{product_id}", response_model=ProductResponseSchema)
 def update_product(
@@ -65,7 +70,7 @@ def update_product(
         raise HTTPException(status_code=403, detail="User does not have permission to update a product")
     updated_product = up(product_id=product_id, updated_product=product)
     if updated_product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
+        raise HTTPException(status_code=400, detail="Product not found or error occurred during update.")
     return updated_product
 
 @router.delete("/{product_id}")
@@ -76,7 +81,8 @@ def delete_product(
 ):
     if not current_user.has_permission(db, 'delete', 'product'):
         raise HTTPException(status_code=403, detail="User does not have permission to delete a product")
-    dp(product_id=product_id)
+    if not dp(product_id=product_id):
+        raise HTTPException(status_code=400, detail="Product not found or error occurred during deletion.")
     return {"detail": "Product deleted"}
 
 @router.get("/category/{category_name}/products", response_model=list[ProductResponseSchema])
@@ -88,4 +94,6 @@ async def read_products_by_category_name(
     if not current_user.has_permission(db, 'get', 'product'):
         raise HTTPException(status_code=403, detail="User does not have permission to get products by category")
     products = get_products_by_category_name(category_name, db)
+    if products is None:
+        raise HTTPException(status_code=404, detail='No category or products found for this category')
     return products

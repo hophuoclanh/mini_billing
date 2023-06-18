@@ -29,7 +29,12 @@ def get_user_by_id(
 ) -> UserSchema:
     if not current_user.has_permission(db, "get", "user_by_id"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    return user_service.get_user_by_id(user_id)
+    try:
+        return user_service.get_user_by_id(user_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post('', response_model=CreateUserResponseSchema)
 def create_user(
@@ -39,9 +44,13 @@ def create_user(
 ) -> CreateUserResponseSchema:
     if not current_user.has_permission(db, "create", "user"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    created_user = user_service.create_user(user)
-    return created_user
-
+    try:
+        created_user = user_service.create_user(user)
+        return created_user
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.put('/{user_id}', response_model=UserSchema)
 def update_user(
@@ -52,7 +61,12 @@ def update_user(
 ) -> UserSchema:
     if not current_user.has_permission(db, "update", "user"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    return user_service.update_user(user_id, updated_user)
+    try:
+        return user_service.update_user(user_id, updated_user)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete('/{user_id}')
 def delete_user(
@@ -62,7 +76,12 @@ def delete_user(
 ) -> None:
     if not current_user.has_permission(db, "delete", "user"):
         raise HTTPException(status_code=403, detail="Permission denied")
-    user_service.delete_user(user_id)
+    try:
+        user_service.delete_user(user_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get('/{user_id}/permissions', response_model= List[PermissionResponseSchema])
 def get_user_permissions(
